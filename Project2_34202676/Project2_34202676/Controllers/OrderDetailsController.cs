@@ -1,67 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project2_34202676.Models;
-using static NuGet.Packaging.PackagingConstants;
 
 namespace Project2_34202676.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrdersController : ControllerBase
+    public class OrderDetailsController : ControllerBase
     {
         private readonly CMPG323_SQL_DBContext _context;
 
-        public OrdersController(CMPG323_SQL_DBContext context)
+        public OrderDetailsController(CMPG323_SQL_DBContext context)
         {
             _context = context;
         }
 
-        // GET: api/Orders
+        // GET: api/OrderDetails
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
+        public async Task<ActionResult<IEnumerable<OrderDetail>>> GetOrderDetails()
         {
-          if (_context.Orders == null)
+          if (_context.OrderDetails == null)
           {
               return NotFound();
           }
-            return await _context.Orders.ToListAsync();
+            return await _context.OrderDetails.ToListAsync();
         }
 
-        // GET: api/Orders/5
+        // GET: api/OrderDetails/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Order>> GetOrder(short id)
+        public async Task<ActionResult<OrderDetail>> GetOrderDetail(short id)
         {
-          if (_context.Orders == null)
+          if (_context.OrderDetails == null)
           {
               return NotFound();
           }
-            var order = await _context.Orders.FindAsync(id);
+            var orderDetail = await _context.OrderDetails.FindAsync(id);
 
-            if (order == null)
+            if (orderDetail == null)
             {
                 return NotFound();
             }
 
-            return order;
+            return orderDetail;
         }
 
-        // PUT: api/Orders/5
+        // PUT: api/OrderDetails/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrder(short id, Order order)
+        public async Task<IActionResult> PutOrderDetail(short id, OrderDetail orderDetail)
         {
-            if (id != order.OrderId)
+            if (id != orderDetail.OrderDetailsId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(order).State = EntityState.Modified;
+            _context.Entry(orderDetail).State = EntityState.Modified;
 
             try
             {
@@ -69,7 +67,7 @@ namespace Project2_34202676.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrderExists(id))
+                if (!OrderDetailExists(id))
                 {
                     return NotFound();
                 }
@@ -82,23 +80,23 @@ namespace Project2_34202676.Controllers
             return NoContent();
         }
 
-        // POST: api/Orders
+        // POST: api/OrderDetails
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Order>> PostOrder(Order order)
+        public async Task<ActionResult<OrderDetail>> PostOrderDetail(OrderDetail orderDetail)
         {
-          if (_context.Orders == null)
+          if (_context.OrderDetails == null)
           {
-              return Problem("Entity set 'CMPG323_SQL_DBContext.Orders'  is null.");
+              return Problem("Entity set 'CMPG323_SQL_DBContext.OrderDetails'  is null.");
           }
-            _context.Orders.Add(order);
+            _context.OrderDetails.Add(orderDetail);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (OrderExists(order.OrderId))
+                if (OrderDetailExists(orderDetail.OrderDetailsId))
                 {
                     return Conflict();
                 }
@@ -108,39 +106,32 @@ namespace Project2_34202676.Controllers
                 }
             }
 
-            return CreatedAtAction("GetOrder", new { id = order.OrderId }, order);
+            return CreatedAtAction("GetOrderDetail", new { id = orderDetail.OrderDetailsId }, orderDetail);
         }
 
-        // DELETE: api/Orders/5
+        // DELETE: api/OrderDetails/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOrder(short id)
+        public async Task<IActionResult> DeleteOrderDetail(short id)
         {
-            if (_context.Orders == null)
+            if (_context.OrderDetails == null)
             {
                 return NotFound();
             }
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null)
+            var orderDetail = await _context.OrderDetails.FindAsync(id);
+            if (orderDetail == null)
             {
                 return NotFound();
             }
 
-            _context.Orders.Remove(order);
+            _context.OrderDetails.Remove(orderDetail);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        /*[HttpGet]
-        public async Task<ActionResult<Order>> GetOrdersfromCustomer(short customerID)
+        private bool OrderDetailExists(short id)
         {
-            var customerOrders = _context.Orders.Where(order => order.CustomerId == customerID).ToList();
-            return Ok(customerOrders);
-        }*/
-
-        private bool OrderExists(short id)
-        {
-            return (_context.Orders?.Any(e => e.OrderId == id)).GetValueOrDefault();
+            return (_context.OrderDetails?.Any(e => e.OrderDetailsId == id)).GetValueOrDefault();
         }
     }
 }
